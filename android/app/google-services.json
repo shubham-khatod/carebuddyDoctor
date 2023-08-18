@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "1024472807583",
+    "project_id": "painscore-2ff3b",
+    "storage_bucket": "painscore-2ff3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024472807583:android:9732256e61992af295caaa",
+        "android_client_info": {
+          "package_name": "com.carebuddydoctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024472807583-ee8jikeb72h4npbi1o4krs4r09n75fsb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA351lyNmaDOT71Yh2fGVwyD4CSptsASNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024472807583-ee8jikeb72h4npbi1o4krs4r09n75fsb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1024472807583-gslp5ls7lfi9ft3dpiq8h8v2716fhn54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.painScore"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024472807583:android:4f68d8ecd6883bc995caaa",
+        "android_client_info": {
+          "package_name": "com.painscore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024472807583-ee8jikeb72h4npbi1o4krs4r09n75fsb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA351lyNmaDOT71Yh2fGVwyD4CSptsASNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024472807583-ee8jikeb72h4npbi1o4krs4r09n75fsb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1024472807583-gslp5ls7lfi9ft3dpiq8h8v2716fhn54.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.painScore"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
