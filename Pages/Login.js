@@ -9,12 +9,18 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
   Image,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import {
+  NotificationServices,
+  requestUserPermission,
+} from './pushNotificationsl';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const Login = () => {
@@ -23,8 +29,22 @@ const Login = () => {
   const [error, setError] = useState(false);
   const navigator = useNavigation();
   useEffect(() => {
+    checkApplicationPermission();
+    requestUserPermission();
+    NotificationServices();
+
     //isLoggedin();
   }, []);
+
+  const checkApplicationPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+      } catch (error) {}
+    }
+  };
 
   useFocusEffect(() => {
     isLoggedin();
@@ -41,11 +61,30 @@ const Login = () => {
       .collection('BranchInformations')
       .doc(branch)
       .get();
-    const data1 = data.data();
+    let data1 = data.data();
     console.log(data1.asssitantDoctor);
     if (data1.asssitantDoctor === `${'+91' + mobile}`) {
       await AsyncStorage.setItem('branch', JSON.stringify(branch));
       await AsyncStorage.setItem('carebuddyLogin', JSON.stringify(true));
+
+      let fcmToken = await AsyncStorage.getItem('fcmToken');
+      if (data1.fcm_token) {
+        console.log('fcm_available');
+        const index = data1.fcm_token.indexOf(fcmToken);
+        if (index === -1) {
+          data1.fcm_token = [...data1.fcm_token, fcmToken];
+          console.log('But not found in array');
+        }
+      } else {
+        data1 = {...data1, fcm_token: [fcmToken]};
+      }
+      console.log(data1);
+
+      await firestore()
+        .collection('BranchInformations')
+        .doc(branch)
+        .update(data1);
+
       console.log(mobile + ' Verified');
       setError(false);
       navigator.navigate('Routes');

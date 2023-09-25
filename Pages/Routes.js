@@ -5,10 +5,11 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import DisplayData from './DisplayData';
 import AttendedList from './AttendedList';
-import {Image, BackHandler} from 'react-native';
+import {Image, BackHandler, Dimensions} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useEffect} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
+const height = Dimensions.get('window').height;
 
 const Routes = () => {
   const tab = createBottomTabNavigator();
@@ -20,7 +21,7 @@ const Routes = () => {
 
         tabBarStyle: {
           backgroundColor: '#DEF1EB', // set background color here
-          height: 60,
+          height: height * 0.085,
         },
         selectedBackgroundColor: 'red',
       }}
