@@ -12,7 +12,11 @@ import {
   TouchableOpacity,
   Image,
   BackHandler,
+  Linking,
+  Platform,
+  Alert,
 } from 'react-native';
+import {Svg, Circle} from 'react-native-svg';
 import {ScrollView} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -26,6 +30,7 @@ const DisplayData = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [attendNote, setAttendNote] = useState('');
+  const [Error, setError] = useState(false);
   //const route = useRoute();
   const [updatedTime, setUpdatedTime] = useState(
     new Date().toLocaleString('en-GB', {
@@ -61,11 +66,17 @@ const DisplayData = () => {
     }, []),
   );
 
-  const handleBackPress = () => {
-    // Return `true` to indicate that the back press is handled
-    // This will prevent the app from navigating back
-    console.log();
-    return true;
+  const handlePhoneCall = callNumber => {
+    const phoneNumber = callNumber;
+    const scheme = Platform.OS === 'android' ? 'tel:' : 'telprompt:';
+    const phoneUrl = scheme + phoneNumber;
+    // console.log('Medical Call: ', phoneUrl);
+    if (callNumber) {
+      Linking.openURL(phoneUrl).catch(() => {
+        console.log('Error!');
+      });
+    }
+    return;
   };
 
   const getBranch = async () => {
@@ -106,67 +117,76 @@ const DisplayData = () => {
   };
 
   const attendHandler = async user => {
-    console.log(user.timeStamp);
-    setLoading(true);
-    const length = user.patientPain.length;
-    user.patientPain[length - 1] = {
-      ...user.patientPain[length - 1],
-      doctorsNotes: attendNote,
-    };
-    const data = {
-      doctorsAction: true,
-      patientPain: [...user.patientPain],
-    };
+    if (attendNote !== '') {
+      console.log(user.timeStamp);
+      setLoading(true);
+      setError(false);
+      const length = user.patientPain.length;
+      user.patientPain[length - 1] = {
+        ...user.patientPain[length - 1],
+        doctorsNotes: attendNote,
+      };
+      const data = {
+        doctorsAction: true,
+        patientPain: [...user.patientPain],
+      };
 
-    await firestore()
-      .collection('Users')
-      .doc(user.timeStamp.toString())
-      .update(data)
-      .then(() => {
-        console.log('Field has been updated to an existing document');
-        user.doctorsAction = true;
-        user.patientPain[user.patientPain.length - 1].doctorsNotes = attendNote;
-        alert('You recently attended a patient successfully');
-        setLoading(false);
-      })
-      .catch(error => {
-        console.log(error);
-        user.doctorsAction = false;
-        setLoading(false);
-      });
+      await firestore()
+        .collection('Users')
+        .doc(user.timeStamp.toString())
+        .update(data)
+        .then(() => {
+          console.log('Field has been updated to an existing document');
+          user.doctorsAction = true;
+          user.patientPain[user.patientPain.length - 1].doctorsNotes =
+            attendNote;
+          Alert.alert('You recently attended a patient successfully');
+          setAttendNote('');
+          setLoading(false);
+        })
+        .catch(error => {
+          Alert.alert(error);
+          user.doctorsAction = false;
+          user.patientPain[user.patientPain.length - 1].doctorsNotes = '';
+          setLoading(false);
+        });
 
-    const timeStamp = Math.floor(firestore.Timestamp.now().toMillis());
-    const docRef = await firestore()
-      .collection('Attended')
-      .doc(timeStamp.toString());
-    console.log(timeStamp);
-    const currentDate = new Date();
-    const options = {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-    };
-    const formattedDateTime = currentDate.toLocaleString('en-GB', options);
+      const timeStamp = Math.floor(firestore.Timestamp.now().toMillis());
+      const docRef = await firestore()
+        .collection('Attended')
+        .doc(timeStamp.toString());
+      console.log(timeStamp);
+      const currentDate = new Date();
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      };
+      const formattedDateTime = currentDate.toLocaleString('en-GB', options);
 
-    await docRef
-      .set({
-        timeStamp: timeStamp,
-        name: user.name,
-        branchName: user.branchName,
-        mobileno: user.mobileno ? user.mobileno : 'NA',
-        diagnosis: user.diagnosis,
-        surgery: user.surgery,
-        latestPainFromPatient: user.latestPainFromPatient,
-        lastUpdateFromPatient: user.lastUpdateFromPatient,
-        doctorsNotes: attendNote ? attendNote : '',
-        dateOfAttended: formattedDateTime,
-      })
-      .catch(error => {
-        alert(error);
-      });
+      await docRef
+        .set({
+          timeStamp: timeStamp,
+          name: user.name,
+          branchName: user.branchName,
+          mobileno: user.mobileno ? user.mobileno : 'NA',
+          diagnosis: user.diagnosis,
+          surgery: user.surgery,
+          latestPainFromPatient: user.latestPainFromPatient,
+          lastUpdateFromPatient: user.lastUpdateFromPatient,
+          doctorsNotes: attendNote ? attendNote : '',
+          dateOfAttended: formattedDateTime,
+        })
+        .catch(error => {
+          alert(error);
+        });
+    } else {
+      alert('Please Enter Short Note');
+      return;
+    }
   };
 
   const handleRefresh = () => {
@@ -267,61 +287,91 @@ const DisplayData = () => {
                         backgroundColor: user.doctorsAction
                           ? '#78fa87'
                           : '#f78b8b',
-                        margin: 5,
+                        margin: 10,
                         padding: 10,
                       }}>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: 'black',
-                          fontWeight: 500,
-                        }}>
-                        Name: {user.name}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: 'black',
-                          fontWeight: 500,
-                        }}>
-                        Mobile: {user.mobileno ? user.mobileno : 'NA'}
-                      </Text>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <View style={{flex: 3, margin: 5}}>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: 500,
+                            }}>
+                            Name: {user.name}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: 500,
+                            }}>
+                            Mobile: {user.mobileno ? user.mobileno : 'NA'}
+                          </Text>
 
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: 'black',
-                          fontWeight: 500,
-                        }}>
-                        Surgery: {user.surgery}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: 'black',
-                          fontWeight: 500,
-                        }}>
-                        PainScore: {user.latestPainFromPatient}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          color: 'black',
-                          fontWeight: 500,
-                        }}>
-                        Date:
-                        {new Date(user.lastUpdateFromPatient).toLocaleString(
-                          'en-GB',
-                          {
-                            year: 'numeric',
-                            month: 'numeric',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: 'numeric',
-                            second: 'numeric',
-                          },
-                        )}
-                      </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: 500,
+                            }}>
+                            Surgery: {user.surgery}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: 500,
+                            }}>
+                            PainScore: {user.latestPainFromPatient}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: 'black',
+                              fontWeight: 500,
+                            }}>
+                            Date:
+                            {new Date(
+                              user.lastUpdateFromPatient,
+                            ).toLocaleString('en-GB', {
+                              year: 'numeric',
+                              month: 'numeric',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              second: 'numeric',
+                            })}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flex: 1,
+                            alignItems: 'flex-end',
+                            justifyContent: 'center',
+                          }}>
+                          <Svg
+                            onPress={() => handlePhoneCall(user.mobileno)}
+                            alignItems="center"
+                            height="60"
+                            width="60">
+                            <Circle cx="28" cy="28" r="28" fill="#478772" />
+                            <Image
+                              style={{
+                                width: 28,
+                                height: 28,
+                                top: 14,
+                                left: 14,
+                                //marginBottom: -10,
+                              }}
+                              source={require('./phone.png')}
+                            />
+                          </Svg>
+                          <Text style={{color: '#000', fontSize: 16}}>
+                            Call Now
+                          </Text>
+                        </View>
+                      </View>
                       <TextInput
                         style={{
                           height: 50,
@@ -332,6 +382,9 @@ const DisplayData = () => {
                           fontSize: 16,
                           width: '100%',
                           backgroundColor: 'white',
+                          padding: 10,
+                          marginTop: 5,
+                          marginBottom: 5,
                         }}
                         placeholder="Enter Short Note Here.."
                         placeholderTextColor={'gray'}
@@ -357,7 +410,7 @@ const DisplayData = () => {
                               color: 'white',
                               textAlign: 'center',
                             }}>
-                            Unattended
+                            Mark As Attended
                           </Text>
                         </TouchableOpacity>
                       </View>

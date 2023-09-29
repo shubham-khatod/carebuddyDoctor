@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   PermissionsAndroid,
+  KeyboardAvoidingView,
   Platform,
   Image,
 } from 'react-native';
@@ -96,94 +97,100 @@ const Login = () => {
   return (
     <SafeAreaView>
       <ScrollView>
-        <View
-          style={{
-            alignItems: 'center',
-            marginTop: 10,
-            borderBottomColor: 'black',
-            borderBottomWidth: 1,
-          }}>
-          <Text style={{fontSize: 28, fontWeight: 600, color: '#376858'}}>
-            Welcome To CareBuddy
-          </Text>
-        </View>
-
-        <View
-          style={{
-            alignItems: 'center',
-          }}>
-          <Image
-            style={{height: 180, width: 120}}
-            source={require('./grayLogo.png')}
-          />
-          <Text style={{fontSize: 18, color: 'gray', marginBottom: 5}}>
-            Please Select Branch
-          </Text>
-          <View style={styles.dropbox}>
-            <Picker
-              selectedValue={branch}
-              style={{color: 'black'}}
-              onValueChange={(itemValue, itemIndex) => setbranch(itemValue)}>
-              <Picker.Item label="Andheri" value="Andheri" />
-              <Picker.Item label="Baner" value="Baner" />
-              <Picker.Item label="Bangalore" value="Bangalore" />
-              <Picker.Item label="Belagavi" value="Belagavi" />
-              <Picker.Item label="Chakan" value="Chakan" />
-              <Picker.Item label="DP Road" value="DP Road" />
-              <Picker.Item label="Hyderabad" value="Hyderabad" />
-              <Picker.Item label="Indiranagar" value="Indiranagar" />
-              <Picker.Item label="JP nagar" value="JP Nagar" />
-              <Picker.Item label="Kolhapur" value="Kolhapur" />
-              <Picker.Item label="Latur" value="Latur" />
-              <Picker.Item label="Ludhiana" value="Ludhiana" />
-              <Picker.Item label="Nashik" value="Nashik" />
-              <Picker.Item label="Navi-Mumbai" value="Navi-Mumbai" />
-              <Picker.Item label="Pimpri-Chinchwad" value="Pimpri-Chinchwad" />
-              <Picker.Item label="Sahakarnagar" value="Sahakarnagar" />
-              <Picker.Item label="Salunkhe Vihar" value="Salunkhe-Vihar" />
-              <Picker.Item label="Surat" value="Surat" />
-              <Picker.Item label="Thane" value="Thane" />
-            </Picker>
-          </View>
-          <Text
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View
             style={{
-              fontSize: 18,
-              color: 'gray',
-              marginTop: 15,
-              marginBottom: 5,
+              alignItems: 'center',
+              marginTop: 10,
+              borderBottomColor: 'black',
+              borderBottomWidth: 1,
             }}>
-            Verify Your Mobile Number
-          </Text>
-          <TextInput
+            <Text style={{fontSize: 28, fontWeight: 600, color: '#376858'}}>
+              Welcome To CareBuddy
+            </Text>
+          </View>
+
+          <View
             style={{
-              height: 50,
-              borderColor: 'black',
-              borderWidth: 1,
-              borderRadius: 10,
-              textAlign: 'center',
-              color: 'black',
-              fontSize: 20,
-              width: '60%',
-            }}
-            value={mobile}
-            maxLength={10}
-            onChangeText={setMobile}
-          />
-          {error && (
+              alignItems: 'center',
+            }}>
+            <Image
+              style={{height: 180, width: 120}}
+              source={require('./grayLogo.png')}
+            />
+            <Text style={{fontSize: 18, color: 'gray', marginBottom: 5}}>
+              Please Select Branch
+            </Text>
+            <View style={styles.dropbox}>
+              <Picker
+                selectedValue={branch}
+                style={{color: 'black'}}
+                onValueChange={(itemValue, itemIndex) => setbranch(itemValue)}>
+                <Picker.Item label="Andheri" value="Andheri" />
+                <Picker.Item label="Baner" value="Baner" />
+                <Picker.Item label="Bangalore" value="Bangalore" />
+                <Picker.Item label="Belagavi" value="Belagavi" />
+                <Picker.Item label="Chakan" value="Chakan" />
+                <Picker.Item label="DP Road" value="DP Road" />
+                <Picker.Item label="Hyderabad" value="Hyderabad" />
+                <Picker.Item label="Indiranagar" value="Indiranagar" />
+                <Picker.Item label="JP nagar" value="JP Nagar" />
+                <Picker.Item label="Kolhapur" value="Kolhapur" />
+                <Picker.Item label="Latur" value="Latur" />
+                <Picker.Item label="Ludhiana" value="Ludhiana" />
+                <Picker.Item label="Nashik" value="Nashik" />
+                <Picker.Item label="Navi-Mumbai" value="Navi-Mumbai" />
+                <Picker.Item
+                  label="Pimpri-Chinchwad"
+                  value="Pimpri-Chinchwad"
+                />
+                <Picker.Item label="Sahakarnagar" value="Sahakarnagar" />
+                <Picker.Item label="Salunkhe Vihar" value="Salunkhe-Vihar" />
+                <Picker.Item label="Surat" value="Surat" />
+                <Picker.Item label="Thane" value="Thane" />
+              </Picker>
+            </View>
             <Text
               style={{
                 fontSize: 18,
-                color: 'red',
+                color: 'gray',
                 marginTop: 15,
                 marginBottom: 5,
               }}>
-              Please Enter Correct Details
+              Verify Your Mobile Number
             </Text>
-          )}
-          <TouchableOpacity onPress={handleSubmit} style={styles.button4}>
-            <Text style={{color: 'white', fontSize: 20}}>SUBMIT</Text>
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              style={{
+                height: 50,
+                borderColor: 'black',
+                borderWidth: 1,
+                borderRadius: 10,
+                textAlign: 'center',
+                color: 'black',
+                fontSize: 20,
+                width: '60%',
+              }}
+              value={mobile}
+              maxLength={10}
+              onChangeText={setMobile}
+            />
+            {error && (
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'red',
+                  marginTop: 15,
+                  marginBottom: 5,
+                }}>
+                Please Enter Correct Details
+              </Text>
+            )}
+            <TouchableOpacity onPress={handleSubmit} style={styles.button4}>
+              <Text style={{color: 'white', fontSize: 20}}>SUBMIT</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
       </ScrollView>
     </SafeAreaView>
   );
