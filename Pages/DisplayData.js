@@ -23,6 +23,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import {useFocusEffect} from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
 let filteredUserList = [];
 const DisplayData = () => {
   const [branch, setBranch] = useState('');
@@ -181,10 +182,10 @@ const DisplayData = () => {
           dateOfAttended: formattedDateTime,
         })
         .catch(error => {
-          alert(error);
+          Alert.alert(error);
         });
     } else {
-      alert('Please Enter Short Note');
+      Alert.alert('Please Enter Short Note');
       return;
     }
   };
@@ -273,189 +274,194 @@ const DisplayData = () => {
             </Text>
           </TouchableOpacity>
             </View>*/}
-        {loading ? (
-          <Text>Please Wait...</Text>
-        ) : (
-          <View>
-            {filteredUserList.length > 0 ? (
-              filteredUserList.map(user =>
-                user.latestPainFromPatient && user.latestPainFromPatient > 5 ? (
-                  !user.doctorsAction ? (
-                    <View
-                      key={user.timeStamp}
-                      style={{
-                        backgroundColor: user.doctorsAction
-                          ? '#78fa87'
-                          : '#f78b8b',
-                        margin: 10,
-                        padding: 10,
-                      }}>
-                      <View style={{flex: 1, flexDirection: 'row'}}>
-                        <View style={{flex: 3, margin: 5}}>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'black',
-                              fontWeight: 500,
-                            }}>
-                            Name: {user.name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'black',
-                              fontWeight: 500,
-                            }}>
-                            Mobile: {user.mobileno ? user.mobileno : 'NA'}
-                          </Text>
+        <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={{
+            color: '#FFF',
+          }}
+        />
+        <View>
+          {filteredUserList.length > 0 ? (
+            filteredUserList.map(user =>
+              user.latestPainFromPatient && user.latestPainFromPatient > 5 ? (
+                !user.doctorsAction ? (
+                  <View
+                    key={user.timeStamp}
+                    style={{
+                      backgroundColor: user.doctorsAction
+                        ? '#78fa87'
+                        : '#f78b8b',
+                      margin: 10,
+                      padding: 10,
+                    }}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                      <View style={{flex: 3, margin: 5}}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'black',
+                            fontWeight: 500,
+                          }}>
+                          Name: {user.name}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'black',
+                            fontWeight: 500,
+                          }}>
+                          Mobile: {user.mobileno ? user.mobileno : 'NA'}
+                        </Text>
 
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'black',
-                              fontWeight: 500,
-                            }}>
-                            Surgery: {user.surgery}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'black',
-                              fontWeight: 500,
-                            }}>
-                            PainScore: {user.latestPainFromPatient}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: 'black',
-                              fontWeight: 500,
-                            }}>
-                            Date:
-                            {new Date(
-                              user.lastUpdateFromPatient,
-                            ).toLocaleString('en-GB', {
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'black',
+                            fontWeight: 500,
+                          }}>
+                          Surgery: {user.surgery}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'black',
+                            fontWeight: 500,
+                          }}>
+                          PainScore: {user.latestPainFromPatient}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: 'black',
+                            fontWeight: 500,
+                          }}>
+                          Date:
+                          {new Date(user.lastUpdateFromPatient).toLocaleString(
+                            'en-GB',
+                            {
                               year: 'numeric',
                               month: 'numeric',
                               day: 'numeric',
                               hour: 'numeric',
                               minute: 'numeric',
                               second: 'numeric',
-                            })}
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flex: 1,
-                            alignItems: 'flex-end',
-                            justifyContent: 'center',
-                          }}>
-                          <Svg
-                            onPress={() => handlePhoneCall(user.mobileno)}
-                            alignItems="center"
-                            height="60"
-                            width="60">
-                            <Circle cx="28" cy="28" r="28" fill="#478772" />
-                            <Image
-                              style={{
-                                width: 28,
-                                height: 28,
-                                top: 14,
-                                left: 14,
-                                //marginBottom: -10,
-                              }}
-                              source={require('./phone.png')}
-                            />
-                          </Svg>
-                          <Text style={{color: '#000', fontSize: 16}}>
-                            Call Now
-                          </Text>
-                        </View>
+                            },
+                          )}
+                        </Text>
                       </View>
-                      <TextInput
-                        style={{
-                          height: 50,
-                          borderColor: 'black',
-                          borderWidth: 1,
-                          borderRadius: 10,
-                          color: 'black',
-                          fontSize: 16,
-                          width: '100%',
-                          backgroundColor: 'white',
-                          padding: 10,
-                          marginTop: 5,
-                          marginBottom: 5,
-                        }}
-                        placeholder="Enter Short Note Here.."
-                        placeholderTextColor={'gray'}
-                        onChangeText={setAttendNote}
-                      />
                       <View
                         style={{
-                          alignItems: 'center',
-                          margin: 5,
+                          flex: 1,
+                          alignItems: 'flex-end',
+                          justifyContent: 'center',
                         }}>
-                        <TouchableOpacity
-                          onPress={() => attendHandler(user)}
-                          activeOpacity={0.5}
-                          style={{
-                            backgroundColor: 'blue',
-                            padding: 10,
-                            borderRadius: 5,
-                            width: '60%',
-                          }}>
-                          <Text
+                        <Svg
+                          onPress={() => handlePhoneCall(user.mobileno)}
+                          alignItems="center"
+                          height="60"
+                          width="60">
+                          <Circle cx="28" cy="28" r="28" fill="#478772" />
+                          <Image
                             style={{
-                              fontSize: 18,
-                              color: 'white',
-                              textAlign: 'center',
-                            }}>
-                            Mark As Attended
-                          </Text>
-                        </TouchableOpacity>
+                              width: 28,
+                              height: 28,
+                              top: 14,
+                              left: 14,
+                              //marginBottom: -10,
+                            }}
+                            source={require('./phone.png')}
+                          />
+                        </Svg>
+                        <Text style={{color: '#000', fontSize: 16}}>
+                          Call Now
+                        </Text>
                       </View>
                     </View>
-                  ) : (
-                    (doctorsActionCount++, null)
-                  )
+                    <TextInput
+                      style={{
+                        height: 50,
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        color: 'black',
+                        fontSize: 16,
+                        width: '100%',
+                        backgroundColor: 'white',
+                        padding: 10,
+                        marginTop: 5,
+                        marginBottom: 5,
+                      }}
+                      placeholder="Enter Short Note Here.."
+                      placeholderTextColor={'gray'}
+                      onChangeText={setAttendNote}
+                    />
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        margin: 5,
+                      }}>
+                      <TouchableOpacity
+                        onPress={() => attendHandler(user)}
+                        activeOpacity={0.5}
+                        style={{
+                          backgroundColor: 'blue',
+                          padding: 10,
+                          borderRadius: 5,
+                          width: '60%',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: 'white',
+                            textAlign: 'center',
+                          }}>
+                          Mark As Attended
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 ) : (
-                  (lessScoreCount++, null)
-                ),
-              )
-            ) : (
-              <Text
-                style={{
-                  color: 'black',
-                  textAlign: 'center',
-                  fontSize: 22,
-                  fontWeight: 500,
-                }}>
-                Data not available
-              </Text>
-            )}
-            {console.log(
-              'Doctors Action Count: ',
-              doctorsActionCount,
-              'Less Score Count: ',
-              lessScoreCount,
-              'Array Length: ',
-              filteredUserList.length,
-            )}
-            {doctorsActionCount + lessScoreCount === filteredUserList.length ? (
-              <Text
-                style={{
-                  color: 'black',
-                  textAlign: 'center',
-                  fontSize: 22,
-                  fontWeight: 500,
-                }}>
-                Patient Details Not Availble
-              </Text>
-            ) : (
-              ''
-            )}
-          </View>
-        )}
+                  (doctorsActionCount++, null)
+                )
+              ) : (
+                (lessScoreCount++, null)
+              ),
+            )
+          ) : (
+            <Text
+              style={{
+                color: 'black',
+                textAlign: 'center',
+                fontSize: 22,
+                fontWeight: 500,
+              }}>
+              Data not available
+            </Text>
+          )}
+          {console.log(
+            'Doctors Action Count: ',
+            doctorsActionCount,
+            'Less Score Count: ',
+            lessScoreCount,
+            'Array Length: ',
+            filteredUserList.length,
+          )}
+          {doctorsActionCount + lessScoreCount === filteredUserList.length ? (
+            <Text
+              style={{
+                color: 'black',
+                textAlign: 'center',
+                fontSize: 22,
+                fontWeight: 500,
+              }}>
+              Patient Details Not Availble
+            </Text>
+          ) : (
+            ''
+          )}
+        </View>
+
         <View
           style={{
             alignItems: 'center',

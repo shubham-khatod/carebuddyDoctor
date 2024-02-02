@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 /* eslint-disable prettier/prettier */
 var attendedRecord = [];
@@ -77,15 +78,15 @@ const AttendedList = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      alert('Error getting data:', error);
+      Alert.alert('Error getting data:', error);
     }
   };
 
   const handleRefresh = () => {
     // Simulate a refresh action
-    setLoading(true);
+
     fetchRecord();
-    setLoading(false); // Simulated delay for demonstration
+    // Simulated delay for demonstration
   };
   return (
     <SafeAreaView>
@@ -123,89 +124,93 @@ const AttendedList = () => {
             />
           </TouchableOpacity>
         </View>
-        {loading ? (
-          <Text>Please Wait...</Text>
-        ) : (
-          <View>
-            {attendedRecord.length > 0 ? (
-              attendedRecord.map(user => (
-                <View
-                  key={user.timeStamp}
+        <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={{
+            color: '#FFF',
+          }}
+        />
+        <View>
+          {attendedRecord.length > 0 ? (
+            attendedRecord.map(user => (
+              <View
+                key={user.timeStamp}
+                style={{
+                  backgroundColor: '#78f087',
+                  margin: 5,
+                  padding: 10,
+                }}>
+                <Text
                   style={{
-                    backgroundColor: '#78f087',
-                    margin: 5,
-                    padding: 10,
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
                   }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Name: {user.name}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Mobile: {user.mobileno ? user.mobileno : 'NA'}
-                  </Text>
+                  Name: {user.name}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  Mobile: {user.mobileno ? user.mobileno : 'NA'}
+                </Text>
 
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Surgery: {user.surgery}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    PainScore: {user.latestPainFromPatient}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Date:
-                    {new Date(user.lastUpdateFromPatient).toLocaleString(
-                      'en-GB',
-                      {
-                        year: 'numeric',
-                        month: 'numeric',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        second: 'numeric',
-                      },
-                    )}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Note:
-                    {user.doctorsNotes}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: 500,
-                    }}>
-                    Date of Attended:{user.dateOfAttended}
-                  </Text>
-                  {/*<Text
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  Surgery: {user.surgery}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  PainScore: {user.latestPainFromPatient}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  Date:
+                  {new Date(user.lastUpdateFromPatient).toLocaleString(
+                    'en-GB',
+                    {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      second: 'numeric',
+                    },
+                  )}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  Note:
+                  {user.doctorsNotes}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontWeight: 500,
+                  }}>
+                  Date of Attended:{user.dateOfAttended}
+                </Text>
+                {/*<Text
                     style={{
                       fontSize: 20,
                       color: 'black',
@@ -214,21 +219,20 @@ const AttendedList = () => {
                     }}>
                     Attended
                 </Text>*/}
-                </View>
-              ))
-            ) : (
-              <Text
-                style={{
-                  color: 'black',
-                  textAlign: 'center',
-                  fontSize: 22,
-                  fontWeight: 500,
-                }}>
-                Data not available
-              </Text>
-            )}
-          </View>
-        )}
+              </View>
+            ))
+          ) : (
+            <Text
+              style={{
+                color: 'black',
+                textAlign: 'center',
+                fontSize: 22,
+                fontWeight: 500,
+              }}>
+              Data not available
+            </Text>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
